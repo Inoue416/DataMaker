@@ -1,0 +1,4 @@
+__pycache__
+datas
+datas/*
+.DS_Store
