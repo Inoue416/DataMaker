@@ -97,7 +97,7 @@ class ExtractLips(CutVideos):
                 cv2.imwrite(os.path.join(self.svp, (path.split('/')[-3]), ((path.split('/'))[-2]), files[i]), img)
                 # パスの保存
             i=i+1
-        self.make_path(os.path.join(self.svp, (path.split('/'))[-3]), ((path.split('/'))[-3] + '.txt'), '')
+        self.make_path(os.path.join(self.svp, (path.split('/'))[-3]), ((path.split('/'))[-3] + '.txt'), ((path.split('/'))[-2]))
 
 
     def _extract_lips(self):

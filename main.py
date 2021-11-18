@@ -83,12 +83,11 @@ def v_r():
 
 # Full auto mode
 def full_auto(paths):
-    """count = 0
+    count = 0
     count = c_v(paths, opt.fa_data_save[count], opt.fa_s_path[count], count)
     paths = os.listdir(opt.fa_d_path[count-1])
     count = m_f_and_ev(paths, opt.fa_data_save[count], opt.fa_s_path[count], count)
-    count = c_f(opt.fa_d_path[count-1], opt.fa_s_path[count], count) # TODO: input options"""
-    count=3
+    count = c_f(opt.fa_d_path[count-1], opt.fa_s_path[count], count)
     count = e_l(opt.fa_d_path[count-1], opt.fa_data_save[count-1], opt.fa_s_path[count], count)
     #count = e_l(paths)
     #count = v_r()
