@@ -64,6 +64,7 @@ class ExtractLips(CutVideos):
     def _run(self, path):
         files = os.listdir(path)
         files.sort()
+        files = [files[0], files[1]]
         array = [cv2.imread(os.path.join(path, file)) for file in files]
         # データがないものをフィルタ処理をしたデータの配列を返す
         array = list(filter(lambda im: not im is None, array))
@@ -93,10 +94,10 @@ class ExtractLips(CutVideos):
                 img = img[y-w//2:y+w//2,x-w:x+w,...]
                 img = cv2.resize(img, (128, 64)) # 128x64の大きさに変換
                 # 保存先の設定
-                cv2.imwrite(os.path.join(self.svp, (files[i].split('/')[-2]), ((files[i].split('/'))[-1])),img)
+                cv2.imwrite(os.path.join(self.svp, (path.split('/')[-3]), ((path.split('/'))[-2]), files[i]), img)
                 # パスの保存
             i=i+1
-        self.make_path(os.path.join(self.svp, (files[i].split('/'))[-2]), ((files[i].split('/'))[-2] + '.txt'), '')
+        self.make_path(os.path.join(self.svp, (path.split('/'))[-3]), ((path.split('/'))[-3] + '.txt'), '')
 
 
     def _extract_lips(self):
