@@ -2,9 +2,12 @@ import os
 from cutVideos import CutVideos
 import cv2
 
-
+"""
+    c_cmd = "ffmpeg -i {} -f wav -ar 16000 {}.wav" 音声認識を用いるときはこれの方が良いかもしれない
+    一般的な音声認識では量子化ビット数16ビット、サンプリング周波数16kHzで用いるから。
+"""
 class ExtractVoice(CutVideos):
-    def __init__(self, vps=None, svp="datas/voice", pp="datas/voice_path", c_cmd="ffmpeg -i {} -f mp3 {}.mp3"):
+    def __init__(self, vps=None, svp="datas/voice", pp="datas/voice_path", c_cmd="ffmpeg -i {} -f wav -ar16000 {}.wav"):
         super().__init__(vps, svp, pp, c_cmd)
 
     def _run_cmd(self, vp, save_path):
