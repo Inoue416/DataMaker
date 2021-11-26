@@ -28,7 +28,7 @@ class CutVideos():
         if self.vps == None:
             return False
         for vp in self.vps:
-            print(vp)
+            print("\nData: ", vp, "\n")
             #self.list_results(vp)
             vp = self.to_mp4(vp)
             cap = cv2.VideoCapture(vp)
@@ -45,6 +45,7 @@ class CutVideos():
             save_folder, ext = os.path.splitext((vp.split('/'))[-1])
             save_path = os.path.join(self.svp, save_folder)
             CutVideos.exists_folder(save_path)
+            print("Cutting now ...")
             self._run_cmd(0, video_length, vp, save_path, ext)
         print("-"*10, " FINSH CUTTING ","-"*10)
         return True
@@ -60,8 +61,11 @@ class CutVideos():
     # フォルダがあればスキップ、なければ作成
     @staticmethod
     def exists_folder(path):
-        if not os.path.isdir(path):
-            os.mkdir(path)
+        if os.path.isdir(path):
+            print("Exists ", path)
+            return
+        print("Make ",path)
+        os.mkdir(path)
 
     # 動画をmp4へ変換
     def to_mp4(self, path):
@@ -69,8 +73,9 @@ class CutVideos():
         save_name, ext = os.path.splitext((path.split('/'))[-1])
         if ext == ".mp4":
             return path
-        if self.exists_file(os.path.join(path.replace(save_name+ext, ''),save_name)):
+        if not self.exists_file(path.replace(ext, '.mp4')):
             try:
+                print(ext, ' to mp4 ...')
                 os.system(mp4_cmd.format(path, os.path.join(path.replace(save_name+ext, ''),save_name)))
             except:
                 print("Not change this file.")
@@ -81,10 +86,13 @@ class CutVideos():
     def make_path(self, save_path, filename, save_name):
         CutVideos.exists_folder(self.pp)
         #print(self.pp)
+        print("\nWrite result data path.")
+        print("Write now ...")
         if self.exists_file(os.path.join(self.pp, filename)):
             try:
                 with open(os.path.join(self.pp, filename), 'a') as f:
                     f.write(os.path.join(save_path, save_name)+'\n')
+                    print("Complete.\n")
             except:
                 print("\nInput error.")
                 print("Please input this format, '***.txt'\n")
@@ -92,6 +100,7 @@ class CutVideos():
             try:
                 with open(os.path.join(self.pp, filename), 'w') as f:
                     f.write(os.path.join(save_path, save_name)+'\n')
+                    print("Complete.\n")
             except:
                 print("\nInput error.")
                 print("Please input this format, '***.txt'\n")

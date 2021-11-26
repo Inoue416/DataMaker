@@ -79,10 +79,10 @@ class ExtractLips(CutVideos):
 
         front256 = self.get_position(256)
         i=0
+        print('\nExtract now ...')
         for point, scene in zip(points, array): # フレームのランドマークと対応しているフレームの画像を1セットにしてそれを順に回す。
         #(point: ランドマーク, scene: ランドマークに対応している画像)
             if(point is not None): # ランドマークがある場合
-                print('extract.')
                 shape = np.array(point[0])
                 # 口元部分のランドマークだけをとる
                 shape = shape[17:]
@@ -104,6 +104,7 @@ class ExtractLips(CutVideos):
         print("-"*10, " START EXTRACT LIPS ", "-"*10)
         self.exists_folder(self.svp)
         for vp in self.vps:
+            print("\nData: ", vp, "\n")
             fn = vp.split('/')
             fn.remove('')
             self.exists_folder(os.path.join(self.svp, fn[-2]))

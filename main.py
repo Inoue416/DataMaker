@@ -3,6 +3,7 @@ from makeFrames import MakeFrames
 from extractVoice import ExtractVoice
 from checkFace import CheckFace
 from extractLips import ExtractLips
+from voiceRecognizer import VoiceRecognizer
 import os
 import sys
 import options as opt
@@ -10,9 +11,6 @@ import options as opt
 
 
 """ TODO:
-    フレームから顔の検出を行い、検出できれば、口元を取り出す。
-    フレームの一枚でも顔が検出できないものがあれば、それは省く。
-
     フルオートと各フェーズを分ける理由としては、各フェーズがあった方が便利と思うから。
 """
 
@@ -23,20 +21,23 @@ if __name__ == "__main__":
 
 def load_path(path):
     paths = []
+    print("\nLoad data path now ...")
     try:
         with open(path, 'r') as f:
             r = ((f.read()).split('\n'))
             r.remove('')
             paths.extend(r)
+            print("Complete.\n")
         return paths
     except:
+        print("Failed.\n")
         return None
 
 def c_v(path, dsv, sv, key):
     # define instance
     cvs = CutVideos(vps=path, svp=dsv, pp=sv)
     if not cvs._cut_videos():
-        print('Not found data.')
+        print('Not found data.\n')
     return key+1
 
 def m_f_and_ev(paths, dsv, ps, key):
@@ -49,11 +50,11 @@ def m_f_and_ev(paths, dsv, ps, key):
         paths.extend(load_path(data_path))
     mf = MakeFrames(vps=paths, svp=dsv[key-1], pp=ps[key-1])
     if not mf._making_frames():
-        print('Not found data.')
+        print('Not found data.\n')
     # extract voice
     ev = ExtractVoice(vps=paths, svp=dsv[key], pp=ps[key])
     if not ev._extract_voice():
-        print('Not found data.')
+        print('Not found data.\n')
     return key+1
 
 
@@ -74,10 +75,12 @@ def e_l(datas, dsv, ps, key):
     return key+1
 
 
-
-# TODO
-def v_r():
-    print("Comming soon.")
+def v_r(datas, dsv, key):
+    paths = []
+    for path in os.listdir(datas):
+        paths.extend(load_path(os.path.join(datas, path)))
+    vr = VoiceRecognizer(vps=paths, svp=dsv, pre_weight=opt.vr_preweight)
+    vr._voice_recognition()
     return
 
 
@@ -89,8 +92,7 @@ def full_auto(paths):
     count = m_f_and_ev(paths, opt.fa_data_save[count], opt.fa_s_path[count], count)
     count = c_f(opt.fa_d_path[count-1], opt.fa_s_path[count], count)
     count = e_l(opt.fa_d_path[count-1], opt.fa_data_save[count-1], opt.fa_s_path[count], count)
-    #count = e_l(paths)
-    #count = v_r()
+    count = v_r(opt.fa_d_path[count-1], opt.fa_data_save[count-1], count)
     return
 
 # Manual mode
@@ -128,7 +130,7 @@ if __name__ == "__main__":
         else:
             print("-"*10, ' AUTO LOAD ', "-"*10, '\n')
             path= opt.full_auto_path
-            path = load_path(path)
+            path = [os.path.join(path, f) for f in os.listdir(path)]
             if not path:
                 print("No file.")
                 break

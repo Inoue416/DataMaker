@@ -11,6 +11,7 @@ class CheckFace(CutVideos):
         print("-"*10, " START CHECK FACE ", "-"*10)
         j = True
         for vp in self.vps:
+            print("\nData: ", vp, "\n")
             datas = [os.path.join(vp, filename) for filename in os.listdir(vp)]
             for data in datas:
                 image = face_recognition.load_image_file(data)

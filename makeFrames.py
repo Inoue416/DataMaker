@@ -18,8 +18,7 @@ class MakeFrames(CutVideos):
             return False
         for vp in self.vps:
             #self.list_results(vp)
-            """print(vp)
-            exit()"""
+            print("\nData: ", vp, "\n")
             cap = cv2.VideoCapture(vp)
             if not cap.isOpened():
                 print("\n{} isn't exists.\n".format(vp))
@@ -35,6 +34,7 @@ class MakeFrames(CutVideos):
             if os.listdir(save_path) != []:
                 print('\nExists frames.\n')
                 continue
+            print("Make frames now ...")
             self._run_cmd(vp, save_path)
         print("-"*10, " FINSH MAKING FRAMES ","-"*10)
         return True

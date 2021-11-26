@@ -7,7 +7,7 @@ import cv2
     一般的な音声認識では量子化ビット数16ビット、サンプリング周波数16kHzで用いるから。
 """
 class ExtractVoice(CutVideos):
-    def __init__(self, vps=None, svp="datas/voice", pp="datas/voice_path", c_cmd="ffmpeg -i {} -f wav -ar16000 {}.wav"):
+    def __init__(self, vps=None, svp="datas/voice", pp="datas/voice_path", c_cmd="ffmpeg -i {} -f wav -ar 16000 {}.wav"):
         super().__init__(vps, svp, pp, c_cmd)
 
     def _run_cmd(self, vp, save_path):
@@ -15,10 +15,10 @@ class ExtractVoice(CutVideos):
         filename, _ = os.path.splitext(filename)
         #print(os.path.join(save_path, filename+'.mp3'))
         #exit()
-        if self.exists_file(os.path.join(save_path, filename+'.mp3')):
+        if self.exists_file(os.path.join(save_path, filename+'.wav')):
             return
         os.system(self.c_cmd.format(vp, os.path.join(save_path, filename)))
-        self.make_path(save_path, (((vp).split('/'))[-2])+".txt", filename+'.mp3')
+        self.make_path(save_path, (((vp).split('/'))[-2])+".txt", filename+'.wav')
 
     def _extract_voice(self):
         self.exists_folder(self.svp)
@@ -26,6 +26,7 @@ class ExtractVoice(CutVideos):
         if self.vps == None:
             return False
         for vp in self.vps:
+            print("\nData: ", vp, "\n")
             #self.list_results(vp)
             cap = cv2.VideoCapture(vp)
             if not cap.isOpened():
