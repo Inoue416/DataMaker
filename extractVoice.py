@@ -24,6 +24,8 @@ class ExtractVoice(CutVideos):
         self.exists_folder(self.svp)
         print("-"*10, " START EXTRACT VOICE ","-"*10)
         if self.vps == None:
+            print("\nNot found video data.\n")
+            print("-"*10, "FAILED", "-"*10, '\n')
             return False
         for vp in self.vps:
             print("\nData: ", vp, "\n")

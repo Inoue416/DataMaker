@@ -10,6 +10,10 @@ class CheckFace(CutVideos):
     def _check_face(self):
         print("-"*10, " START CHECK FACE ", "-"*10)
         j = True
+        if self.vps == None:
+            print("Not found frame data.")
+            print("-"*10, "FAILED", "-"*10, '\n')
+            return
         for vp in self.vps:
             print("\nData: ", vp, "\n")
             datas = [os.path.join(vp, filename) for filename in os.listdir(vp)]

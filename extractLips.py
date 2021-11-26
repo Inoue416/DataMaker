@@ -103,6 +103,9 @@ class ExtractLips(CutVideos):
     def _extract_lips(self):
         print("-"*10, " START EXTRACT LIPS ", "-"*10)
         self.exists_folder(self.svp)
+        if self.vps == None:
+            print("-"*10, "FAILED", "-"*10, '\n')
+            return
         for vp in self.vps:
             print("\nData: ", vp, "\n")
             fn = vp.split('/')

@@ -9,7 +9,8 @@ import os
 """
 
 data_root = 'datas/'
-
+"""origin = "originDatas"
+data_origin = os.path.join(data_root, origin)
 # this options is that save data and load data.
 data_save = [
     os.path.join(data_root, "cut_videos"),
@@ -20,7 +21,6 @@ data_save = [
 d_path = [
           os.path.join(data_root, "cut_video_path"),
           os.path.join(data_root, "frames_path"),
-          os.path.join(data_root, "frames_path"),
           os.path.join(data_root, "voice_path")
           ]
 
@@ -28,7 +28,7 @@ s_path = [os.path.join(data_root, "cut_video_path"),
           [os.path.join(data_root, "frames_path"), os.path.join(data_root, "voice_path")],
           os.path.join(data_root, "face_logs"),
           os.path.join(data_root, "voice_to_anno"),
-          os.path.join(data_root, "lips_path")]
+          os.path.join(data_root, "lips_path")]"""
 
 # full auto mode options
 full_folder = "originDatas" # this option is text file of data path list.

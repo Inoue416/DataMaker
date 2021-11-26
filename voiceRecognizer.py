@@ -21,9 +21,16 @@ class VoiceRecognizer(CutVideos):
             print("Can't write result.\n")
 
     def _voice_recognition(self):
+        print("-"*10, " START SPEECH TO TEXT ", "-"*10)
+
         self.exists_folder(self.svp)
         if not self.pre_weight:
             print("\nCan't load weights.\n")
+            print("-"*10, "FAILED", "-"*10, '\n')
+            return
+        if self.vps == None:
+            print("\nNot found voice data.\n")
+            print("-"*10, "FAILED", "-"*10, '\n')
             return
         #self.exists_folder(self.svp)
         d = ModelDownloader()
@@ -50,3 +57,5 @@ class VoiceRecognizer(CutVideos):
             self.exists_folder(os.path.join(self.svp, foldername))
             if self.exists_file(os.path.join(self.svp, foldername, filename+'.txt')):
                 self._write_anno(text, foldername, filename)
+        print("-"*10, " FINISH SPEECH TO TEXT ", "-"*10)
+

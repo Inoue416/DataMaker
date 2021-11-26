@@ -69,6 +69,8 @@ def c_f(datas, ps, key):
 
 # extract lips from frames.
 def e_l(datas, dsv, ps, key):
+    print(datas)
+    #exit()
     datas = load_path(datas)
     el = ExtractLips(vps=datas, svp=dsv, pp=ps)
     el._extract_lips()
@@ -96,21 +98,52 @@ def full_auto(paths):
     return
 
 # Manual mode
-def manual():
-    return
+"""def manual(choose, filename):
+    # データのパスのロード
+    if choose == "0":
+        if not self.exists_file(os.path.join(opt.data_origin, filename)):
+            print(filename, " isn't.\n")
+        c_v([os.path.join(opt.data_origin, filename)], opt.data_save[0], opt.s_path[0], 0)
+
+    elif choose == "1":
+        if not self.exists_file(os.path.join(opt.d_path[0], filename)):
+            print(filename, " isn't.\n")
+        m_f_and_ev([filename], opt.data_save[1], opt.s_path[1],1)
+
+    elif choose == "2":
+        if not self.exists_file(os.path.join(opt.d_path[1], filename)):
+            print(filename, " isn't.\n")
+        datas = load_path(os.path.join(opt.d_path[1], filename))
+        c_f(datas, opt.s_path[2], 0)
+
+    elif choose == "3":
+        if not self.exists_file(os.path.join(opt.d_path[1], filename)):
+            print(filename, " isn't.\n")
+        datas = load_path(os.path.join(opt.d_path[1], filename))
+        e_l(datas, )
+
+    elif choose == "4":
+        v_r()
+
+    return"""
 
 if __name__ == "__main__":
-    judge = True
+    print("-"*10, ' DATA LOAD ', "-"*10, '\n')
+    path= opt.full_auto_path
+    path = [os.path.join(path, f) for f in os.listdir(path)]
+    if not path:
+        print("No file.")
+        exit()
+    full_auto(path)
+    """judge = True
     while judge:
         print("Choose phase.")
-        """
-            0: making short videos.
-            1: making frames of 0 and extract voice of 0.
-            2: check face in frames. if not find face, write log file.
-            3: extract lips from frames of 1.
-            4: voice data to text data.
-            5: full auto.
-        """
+            #0: making short videos.
+            #1: making frames of 0 and extract voice of 0.
+            #2: check face in frames. if not find face, write log file.
+            #3: extract lips from frames of 1.
+            #4: voice data to text data.
+            #5: full auto.
         while True:
             print("0: Cut videos\n1: Make frames and Extract voice\n2: Check faces\n3: Extract lips\n4: Voice recognize\n5: Full auto")
             choose = input("\nINPUT: ")
@@ -125,8 +158,8 @@ if __name__ == "__main__":
             print("-"*10, ' LOAD DATA PATH ', "-"*10, '\n')
             print("Input name of load file.")
             filename = input("INPUT: ")
-            path = os.path.join(opt.data_root, filename)
-            path = load_path(path)
+            manual(choose, filename)
+            
         else:
             print("-"*10, ' AUTO LOAD ', "-"*10, '\n')
             path= opt.full_auto_path
@@ -135,17 +168,6 @@ if __name__ == "__main__":
                 print("No file.")
                 break
             full_auto(path)
-        # データのパスのロード
-        """if choose == "0":
-            c_v(path, choose)
-        elif choose == "1":
-            m_f_and_ev(path, choose)
-        elif choose == "2":
-            c_f()
-        elif choose == "3":
-            v_r()
-        elif choose == "4":
-            e_l()"""
 
         while True:
             print("\n0: FINISH  1: CONTINUE")
@@ -157,5 +179,5 @@ if __name__ == "__main__":
                 break
             else:
                 print("\nInput error.")
-                print("Please input 0 or 1 only.")
+                print("Please input 0 or 1 only.")"""
     print("\n", "-"*10 ," END ", "-"*10)

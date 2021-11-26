@@ -26,6 +26,8 @@ class CutVideos():
         self.exists_folder(self.svp)
         print("-"*10, " START CUTTING ","-"*10)
         if self.vps == None:
+            print("Not found video data.")
+            print("-"*10, "FAILED", "-"*10, '\n')
             return False
         for vp in self.vps:
             print("\nData: ", vp, "\n")
@@ -62,9 +64,7 @@ class CutVideos():
     @staticmethod
     def exists_folder(path):
         if os.path.isdir(path):
-            print("Exists ", path)
             return
-        print("Make ",path)
         os.mkdir(path)
 
     # 動画をmp4へ変換
