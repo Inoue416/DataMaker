@@ -53,3 +53,5 @@ fa_s_path = [os.path.join(data_root, "fa_cut_video_path"),
              os.path.join(data_root, "fa_lips_path"),
              os.path.join(data_root, "fa_voice_to_anno")
              ]
+
+vr_preweight = "kan-bayashi/csj_asr_train_asr_transformer_raw_char_sp_valid.acc.ave"
