@@ -1,12 +1,12 @@
 import os
 import cv2
 import options as opt
+import shutil
 
 class CutVideos():
-    def __init__(self, vps=None, svp="datas/cut_videos", pp="datas/cut_videos_path", c_cmd="ffmpeg -ss {} -i {} -to {} -c copy {}", cut_num=3): # video path, save path
+    def __init__(self, vps=None, svp="datas/cut_videos", c_cmd="ffmpeg -ss {} -i {} -to {} -c copy {}", cut_num=3): # video path, save path
         self.vps = vps
         self.svp = svp
-        self.pp = pp
         self.c_cmd = c_cmd
         self.cut_num = cut_num
 
@@ -17,7 +17,7 @@ class CutVideos():
             return
         if not self.exists_file(os.path.join(save_path, ("{}To{}"+ext).format(second, second+self.cut_num))):
             os.system(self.c_cmd.format(second, vp, second+self.cut_num, os.path.join(save_path, ("{}To{}"+ext).format(second, second+self.cut_num))))
-            self.make_path(save_path, ((vp.split("/"))[-1]).replace(ext, '.txt'), ("{}To{}"+ext).format(second, second+self.cut_num))
+            #self.make_path(save_path, ((vp.split("/"))[-1]).replace(ext, '.txt'), ("{}To{}"+ext).format(second, second+self.cut_num))
         second += self.cut_num
         self._run_cmd(second, max_second, vp, save_path, ext)
 
@@ -39,17 +39,26 @@ class CutVideos():
                 cap.release()
                 continue
             ll= int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            #print(ll)
             if (ll == 19):
                 ll = 14*30
             video_length = (ll / cap.get(cv2.CAP_PROP_FPS))
             #video_length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) / cap.get(cv2.CAP_PROP_FPS))
             cap.release()
+            #exit()
             save_folder, ext = os.path.splitext((vp.split('/'))[-1])
             save_path = os.path.join(self.svp, save_folder)
+            #print(save_path)
+            #exit()
             CutVideos.exists_folder(save_path)
             print("Cutting now ...")
             self._run_cmd(0, video_length, vp, save_path, ext)
         print("-"*10, " FINSH CUTTING ","-"*10)
+        _, _, free = shutil.disk_usage('/')
+        free = int(free/(10**9))
+        if (free <= 3):
+            print('Must increase capacity.')
+            exit()
         return True
 
     # 処理結果をひとまとめにする作業
@@ -81,29 +90,6 @@ class CutVideos():
                 print("Not change this file.")
                 exit()
         return os.path.join(path.replace(save_name+ext, ''),save_name) + ".mp4"
-
-    # カッティングしたビデオまでのパスの作成
-    def make_path(self, save_path, filename, save_name):
-        CutVideos.exists_folder(self.pp)
-        #print(self.pp)
-        print("\nWrite result data path.")
-        print("Write now ...")
-        if self.exists_file(os.path.join(self.pp, filename)):
-            try:
-                with open(os.path.join(self.pp, filename), 'a') as f:
-                    f.write(os.path.join(save_path, save_name)+'\n')
-                    print("Complete.\n")
-            except:
-                print("\nInput error.")
-                print("Please input this format, '***.txt'\n")
-        else:
-            try:
-                with open(os.path.join(self.pp, filename), 'w') as f:
-                    f.write(os.path.join(save_path, save_name)+'\n')
-                    print("Complete.\n")
-            except:
-                print("\nInput error.")
-                print("Please input this format, '***.txt'\n")
 
     def exists_file(self, path):
         if os.path.isfile(path):

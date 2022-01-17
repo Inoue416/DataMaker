@@ -1,5 +1,7 @@
 import os
 
+# TODO: USBなどのデバイスからorigindataフォルダーに抽出するデータのコピーを行うための処理を入れる
+
 """
     0: making short videos.
     1: making frames of 0 and extract voice of 0.
@@ -44,13 +46,11 @@ fa_data_save = [
 fa_d_path = [
              os.path.join(data_root, "fa_cut_video_path"),
              os.path.join(data_root, "fa_frames_path"),
-             os.path.join(data_root, "fa_face_logs", "success.txt"),
              os.path.join(data_root, "fa_voice_path")
              ]
 
 fa_s_path = [os.path.join(data_root, "fa_cut_video_path"),
              [os.path.join(data_root, "fa_frames_path"), os.path.join(data_root, "fa_voice_path")],
-             os.path.join(data_root, "fa_face_logs"),
              os.path.join(data_root, "fa_lips_path")
              ]
 

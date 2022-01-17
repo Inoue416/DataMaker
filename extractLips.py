@@ -3,11 +3,19 @@ import numpy as np
 import cv2
 import face_alignment
 import os
+import shutil
+
+
+"""
+    TODO:
+        フレーム数と口元領域のフレーム数の枚数が合わない小分けビデオデータ、音声データ、フレームデータ
+        口元のフレームを削除するコードの追加
+"""
 
 
 class ExtractLips(CutVideos):
-    def __init__(self, vps=None, svp="datas/lips", pp="datas/lips_path"):
-        super().__init__(vps, svp, pp)
+    def __init__(self, vps=None, svp="datas/lips"):
+        super().__init__(vps, svp)
 
     def get_position(self, size, padding=0.25):
 
@@ -63,8 +71,11 @@ class ExtractLips(CutVideos):
 
     def _run(self, path):
         files = os.listdir(path)
+        if files == []:
+            print('Message: ', path, ' is empty.')
+            return
         files.sort()
-        files = [files[0], files[1]]
+        #files = [files[0], files[1]]
         array = [cv2.imread(os.path.join(path, file)) for file in files]
         # データがないものをフィルタ処理をしたデータの配列を返す
         array = list(filter(lambda im: not im is None, array))
@@ -94,10 +105,9 @@ class ExtractLips(CutVideos):
                 img = img[y-w//2:y+w//2,x-w:x+w,...]
                 img = cv2.resize(img, (128, 64)) # 128x64の大きさに変換
                 # 保存先の設定
-                cv2.imwrite(os.path.join(self.svp, (path.split('/')[-3]), ((path.split('/'))[-2]), files[i]), img)
+                cv2.imwrite(os.path.join(self.svp, (path.split('/')[-1]), files[i]), img)
                 # パスの保存
             i=i+1
-        self.make_path(os.path.join(self.svp, (path.split('/'))[-3]), ((path.split('/'))[-3] + '.txt'), ((path.split('/'))[-2]))
 
 
     def _extract_lips(self):
@@ -107,10 +117,25 @@ class ExtractLips(CutVideos):
             print("-"*10, "FAILED", "-"*10, '\n')
             return
         for vp in self.vps:
+            data_paths = [os.path.join(vp, file) for file in os.listdir(vp)]
             print("\nData: ", vp, "\n")
-            fn = vp.split('/')
-            fn.remove('')
-            self.exists_folder(os.path.join(self.svp, fn[-2]))
-            self.exists_folder(os.path.join(self.svp, fn[-2], fn[-1]))
-            self._run(vp)
+            if data_paths == []:
+                continue
+            data_paths.sort()
+            for data in data_paths:
+                print("\nData: ", data, "\n")
+                fn = data.split('/')
+                #fn.remove('')
+                """print(fn[-1])
+                print(os.path.join(self.svp, fn[-2]))
+                print(os.path.join(self.svp, fn[-2], fn[-1]))
+                exit()"""
+                self.exists_folder(os.path.join(self.svp, fn[-2]))
+                self.exists_folder(os.path.join(self.svp, fn[-2], fn[-1]))
+                self._run(data)
         print("-"*10, " FINISH EXTRACT LIPS ", "-"*10)
+        _, _, free = shutil.disk_usage('/')
+        free = int((free/(10**9)))
+        if (free <= 3):
+            print('Must increase capacity.')
+            exit()

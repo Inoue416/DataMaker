@@ -1,7 +1,7 @@
 from cutVideos import *
 from makeFrames import MakeFrames
 from extractVoice import ExtractVoice
-from checkFace import CheckFace
+#from checkFace import CheckFace
 from extractLips import ExtractLips
 from voiceRecognizer import VoiceRecognizer
 import os
@@ -19,82 +19,67 @@ if __name__ == "__main__":
     opt = __import__('options')
     CutVideos.exists_folder(opt.data_root)
 
-def load_path(path):
-    paths = []
-    print("\nLoad data path now ...")
-    try:
-        with open(path, 'r') as f:
-            r = ((f.read()).split('\n'))
-            r.remove('')
-            paths.extend(r)
-            print("Complete.\n")
-        return paths
-    except:
-        print("Failed.\n")
-        return None
-
-def c_v(path, dsv, sv, key):
+def c_v(path, dsv, key):
     # define instance
-    cvs = CutVideos(vps=path, svp=dsv, pp=sv)
+    print(path, dsv)
+    cvs = CutVideos(vps=path, svp=dsv)
     if not cvs._cut_videos():
         print('Not found data.\n')
     return key+1
 
-def m_f_and_ev(paths, dsv, ps, key):
+def mf_and_ev(paths, dsv, key):
     data_paths = []
     for path in paths:
-        data_paths.append(os.path.join(opt.fa_d_path[key-1], path))
+        data_paths.append(os.path.join(opt.fa_data_save[key-1], path))
         # make frames
-    paths = []
-    for data_path in data_paths:
-        paths.extend(load_path(data_path))
-    mf = MakeFrames(vps=paths, svp=dsv[key-1], pp=ps[key-1])
+    mf = MakeFrames(vps=data_paths, svp=dsv[key-1])
     if not mf._making_frames():
         print('Not found data.\n')
     # extract voice
-    ev = ExtractVoice(vps=paths, svp=dsv[key], pp=ps[key])
+    ev = ExtractVoice(vps=data_paths, svp=dsv[key])
     if not ev._extract_voice():
         print('Not found data.\n')
     return key+1
 
 
 # face recognize
-def c_f(datas, ps, key):
+"""def c_f(datas, ps, key):
     paths = []
     for path in os.listdir(datas):
         paths.extend(load_path(os.path.join(datas, path)))
     cf = CheckFace(vps=paths, pp=ps)
     cf._check_face()
-    return key+1
+    return key+1"""
 
 # extract lips from frames.
-def e_l(datas, dsv, ps, key):
-    print(datas)
-    #exit()
-    datas = load_path(datas)
-    el = ExtractLips(vps=datas, svp=dsv, pp=ps)
+def e_l(datas, dsv, key):
+    frames_data = [os.path.join(datas, fname) for fname in os.listdir(datas)]
+    el = ExtractLips(vps=frames_data, svp=dsv)
     el._extract_lips()
     return key+1
 
 
 def v_r(datas, dsv, key):
-    paths = []
-    for path in os.listdir(datas):
-        paths.extend(load_path(os.path.join(datas, path)))
-    vr = VoiceRecognizer(vps=paths, svp=dsv, pre_weight=opt.vr_preweight)
+    #print(datas, dsv)
+    #exit()
+    data_paths = [os.path.join(datas, fname) for fname in os.listdir(datas)]
+    vr = VoiceRecognizer(vps=data_paths, svp=dsv, pre_weight=opt.vr_preweight)
     vr._voice_recognition()
     return
 
 
 # Full auto mode
 def full_auto(paths):
-    count = 0
-    count = c_v(paths, opt.fa_data_save[count], opt.fa_s_path[count], count)
-    paths = os.listdir(opt.fa_d_path[count-1])
-    count = m_f_and_ev(paths, opt.fa_data_save[count], opt.fa_s_path[count], count)
-    count = c_f(opt.fa_d_path[count-1], opt.fa_s_path[count], count)
-    count = e_l(opt.fa_d_path[count-1], opt.fa_data_save[count-1], opt.fa_s_path[count], count)
-    count = v_r(opt.fa_d_path[count-1], opt.fa_data_save[count-1], count)
+    #count = 0
+    #count = c_v(paths, opt.fa_data_save[count], count)
+    #exit()
+    #count = 1
+    #paths = os.listdir(opt.fa_data_save[count-1])
+    #count = mf_and_ev(paths, opt.fa_data_save[count], count)
+    #count = c_f(opt.fa_d_path[count-1], opt.fa_s_path[count], count)
+    count = 3
+    #count = e_l(opt.fa_data_save[count-1][0], opt.fa_data_save[count], count)
+    count = v_r(opt.fa_data_save[count-2][1], opt.fa_data_save[count], count)
     return
 
 # Manual mode

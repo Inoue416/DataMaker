@@ -3,6 +3,7 @@ import soundfile
 from cutVideos import *
 from espnet2.bin.asr_inference import Speech2Text
 from espnet_model_zoo.downloader import ModelDownloader
+import shutil
 
 class VoiceRecognizer(CutVideos):
     def __init__(self, vps=None, svp="datas/anno_data", pre_weight=None):
@@ -10,7 +11,6 @@ class VoiceRecognizer(CutVideos):
         self.pre_weight = pre_weight
 
     def _write_anno(self, text, foldername, filename):
-        #self.exists_folder(os.path.join(self.svp, foldername))
         try:
             with open(os.path.join(self.svp, foldername, filename+".txt"), 'w') as f:
                 print('Results: ', text)
@@ -47,15 +47,29 @@ class VoiceRecognizer(CutVideos):
         )
         for vp in self.vps:
             print("\nData: ", vp, "\n")
-            filename = vp.split('/')
-            foldername = filename[-2]
-            filename = filename[-1]
-            filename, _ = os.path.splitext(filename)
-            speech, rate = soundfile.read(vp)
-            nbests = speech2text(speech)
-            text, *_ = nbests[0]
-            self.exists_folder(os.path.join(self.svp, foldername))
-            if self.exists_file(os.path.join(self.svp, foldername, filename+'.txt')):
-                self._write_anno(text, foldername, filename)
+            data_paths = [os.path.join(vp, file) for file in os.listdir(vp)]
+            if data_paths == []:
+                continue
+            data_paths.sort()
+            for data in data_paths:
+                print("\nData: ", data, "\n")
+                filename = data.split('/')
+                foldername = filename[-2]
+                filename = filename[-1]
+                filename, _ = os.path.splitext(filename)
+                speech, rate = soundfile.read(data)
+                nbests = speech2text(speech)
+                text, *_ = nbests[0]
+                print(text)
+                print(filename)
+                #exit()
+                self.exists_folder(os.path.join(self.svp, foldername))
+                if not self.exists_file(os.path.join(self.svp, foldername, filename+'.txt')):
+                    self._write_anno(text, foldername, filename)
         print("-"*10, " FINISH SPEECH TO TEXT ", "-"*10)
+        _, _, free = shutil.disk_usage('/')
+        free = int((free/(10**9)))
+        if (free <= 3):
+            print('Must increase capacity.')
+            exit()
 
