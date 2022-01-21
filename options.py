@@ -1,6 +1,5 @@
 import os
 
-# TODO: USBなどのデバイスからorigindataフォルダーに抽出するデータのコピーを行うための処理を入れる
 
 """
     0: making short videos.
@@ -43,15 +42,10 @@ fa_data_save = [
     os.path.join(data_root, "fa_anno")
 ]
 
-fa_d_path = [
-             os.path.join(data_root, "fa_cut_video_path"),
-             os.path.join(data_root, "fa_frames_path"),
-             os.path.join(data_root, "fa_voice_path")
-             ]
-
-fa_s_path = [os.path.join(data_root, "fa_cut_video_path"),
-             [os.path.join(data_root, "fa_frames_path"), os.path.join(data_root, "fa_voice_path")],
-             os.path.join(data_root, "fa_lips_path")
-             ]
-
 vr_preweight = "kan-bayashi/csj_asr_train_asr_transformer_raw_char_sp_valid.acc.ave"
+
+# media options
+media_name = "ボリューム"
+media_path = "/media/yuyainoue"
+copy_data_num = 2
+copy_folder_num = 1

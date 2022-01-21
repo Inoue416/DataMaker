@@ -7,8 +7,9 @@ from voiceRecognizer import VoiceRecognizer
 import os
 import sys
 import options as opt
+import shutil
 
-
+# TODO: 既存で処理されているデータのスキップと削除
 
 """ TODO:
     フルオートと各フェーズを分ける理由としては、各フェーズがあった方が便利と思うから。
@@ -60,25 +61,56 @@ def e_l(datas, dsv, key):
 
 
 def v_r(datas, dsv, key):
-    #print(datas, dsv)
-    #exit()
     data_paths = [os.path.join(datas, fname) for fname in os.listdir(datas)]
     vr = VoiceRecognizer(vps=data_paths, svp=dsv, pre_weight=opt.vr_preweight)
     vr._voice_recognition()
     return
 
+def get_media_path():
+    copy_path = 'datas/originDatas'
+    path = os.path.join(opt.media_path, opt.media_name)
+    if not os.path.isdir(os.path.join(opt.media_path, opt.media_name)):
+        print(os.path.join(opt.media_path, opt.media_name))
+        print("This path don't exists.")
+        print("Check media options.")
+        exit()
+    folders = os.listdir(path)
+    folders.sort()
+    index = []
+    i = 0
+    for folder in folders:
+        if 'System' in folder:
+            index.append(i)
+        i+=1
+    if index != []:
+        for idx in index:
+            folders.pop(idx)
+    paths = [os.path.join(path, folder) for folder in folders]
+    return paths
+
+def setup_data(data_folder, total_data_num):
+    print("target folder: ")
+    print(data_folder)
+    datas = os.listdir(data_folder)
+    datas.sort()
+    result_total = total_data_num
+    for cn in range(len(datas)):
+        #print(datas[cn])
+        _, ext = os.path.splitext(datas[cn])
+        filename = 'no_{}{}'.format(result_total, ext)
+        #print(filename)
+        shutil.copy2(os.path.join(data_folder, datas[cn]), os.path.join(opt.full_auto_path, filename))
+        result_total += 1
+    return result_total
+
 
 # Full auto mode
 def full_auto(paths):
-    #count = 0
-    #count = c_v(paths, opt.fa_data_save[count], count)
-    #exit()
-    #count = 1
-    #paths = os.listdir(opt.fa_data_save[count-1])
-    #count = mf_and_ev(paths, opt.fa_data_save[count], count)
-    #count = c_f(opt.fa_d_path[count-1], opt.fa_s_path[count], count)
-    count = 3
-    #count = e_l(opt.fa_data_save[count-1][0], opt.fa_data_save[count], count)
+    count = 0
+    count = c_v(paths, opt.fa_data_save[count], count)
+    paths = os.listdir(opt.fa_data_save[count-1])
+    count = mf_and_ev(paths, opt.fa_data_save[count], count)
+    count = e_l(opt.fa_data_save[count-1][0], opt.fa_data_save[count], count)
     count = v_r(opt.fa_data_save[count-2][1], opt.fa_data_save[count], count)
     return
 
@@ -113,13 +145,25 @@ def full_auto(paths):
     return"""
 
 if __name__ == "__main__":
-    print("-"*10, ' DATA LOAD ', "-"*10, '\n')
-    path= opt.full_auto_path
-    path = [os.path.join(path, f) for f in os.listdir(path)]
-    if not path:
-        print("No file.")
-        exit()
-    full_auto(path)
+    total_data_num = 0
+    data_folders = get_media_path()
+    print(data_folders)
+    #exit()
+    for i in range(len(data_folders)):#opt.copy_folder_num):
+        print("-"*10, ' DATA LOAD ', "-"*10, '\n')
+        #total_data_num = setup_data(data_folders[i], total_data_num)
+        print(total_data_num)
+        print("-"*10, ' COMPLETE ', "-"*10, '\n')
+
+        print("-"*10, ' DATA LOAD ', "-"*10, '\n')
+        path= opt.full_auto_path
+        path = [os.path.join(path, f) for f in os.listdir(path)]
+        if not path:
+            print("No file.")
+            exit()
+        print("-"*10, ' COMPLETE ', "-"*10, '\n')
+
+        full_auto(path)
     """judge = True
     while judge:
         print("Choose phase.")

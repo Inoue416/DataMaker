@@ -3,8 +3,10 @@ import cv2
 import options as opt
 import shutil
 
+# TODO: originDataの消去
+
 class CutVideos():
-    def __init__(self, vps=None, svp="datas/cut_videos", c_cmd="ffmpeg -ss {} -i {} -to {} -c copy {}", cut_num=3): # video path, save path
+    def __init__(self, vps=None, svp="datas/cut_videos", c_cmd="ffmpeg -r 30 -ss {} -i {} -t {} -c copy {}", cut_num=3): # video path, save path
         self.vps = vps
         self.svp = svp
         self.c_cmd = c_cmd
@@ -13,10 +15,12 @@ class CutVideos():
 
     # ビデオのカッティング処理
     def _run_cmd(self, second, max_second, vp, save_path, ext):
+        """if (second == 9):
+            return"""
         if (second+self.cut_num) > max_second:
             return
         if not self.exists_file(os.path.join(save_path, ("{}To{}"+ext).format(second, second+self.cut_num))):
-            os.system(self.c_cmd.format(second, vp, second+self.cut_num, os.path.join(save_path, ("{}To{}"+ext).format(second, second+self.cut_num))))
+            os.system(self.c_cmd.format(second, vp, self.cut_num, os.path.join(save_path, ("{}To{}"+ext).format(second, second+self.cut_num))))
             #self.make_path(save_path, ((vp.split("/"))[-1]).replace(ext, '.txt'), ("{}To{}"+ext).format(second, second+self.cut_num))
         second += self.cut_num
         self._run_cmd(second, max_second, vp, save_path, ext)
@@ -29,6 +33,7 @@ class CutVideos():
             print("Not found video data.")
             print("-"*10, "FAILED", "-"*10, '\n')
             return False
+        #count = 0
         for vp in self.vps:
             print("\nData: ", vp, "\n")
             #self.list_results(vp)
@@ -39,12 +44,14 @@ class CutVideos():
                 cap.release()
                 continue
             ll= int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-            #print(ll)
+            print(ll)
             if (ll == 19):
                 ll = 14*30
             video_length = (ll / cap.get(cv2.CAP_PROP_FPS))
-            #video_length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) / cap.get(cv2.CAP_PROP_FPS))
             cap.release()
+            
+            #video_length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) / cap.get(cv2.CAP_PROP_FPS))
+            
             #exit()
             save_folder, ext = os.path.splitext((vp.split('/'))[-1])
             save_path = os.path.join(self.svp, save_folder)
@@ -53,6 +60,7 @@ class CutVideos():
             CutVideos.exists_folder(save_path)
             print("Cutting now ...")
             self._run_cmd(0, video_length, vp, save_path, ext)
+            os.remove(vp)
         print("-"*10, " FINSH CUTTING ","-"*10)
         _, _, free = shutil.disk_usage('/')
         free = int(free/(10**9))

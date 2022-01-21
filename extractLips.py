@@ -75,6 +75,7 @@ class ExtractLips(CutVideos):
             print('Message: ', path, ' is empty.')
             return
         files.sort()
+        
         #files = [files[0], files[1]]
         array = [cv2.imread(os.path.join(path, file)) for file in files]
         # データがないものをフィルタ処理をしたデータの配列を返す
@@ -82,9 +83,9 @@ class ExtractLips(CutVideos):
         #array = [cv2.resize(im, (100, 50), interpolation=cv2.INTER_LANCZOS4) for im in array]
 
         # 2Dの画像の人の顔のランドマークを検出するオブジェクトのインスタンスを生成
-        fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False, device='cpu')
+        #fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False, device='cpu')
 
-        #fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False, device='cuda') #GPU使用の場合これを使う
+        fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False, device='cuda') #GPU使用の場合これを使う
         # フレームの画像のランドマークを配列として取得
         points = [fa.get_landmarks(I) for I in array]
 
@@ -105,9 +106,37 @@ class ExtractLips(CutVideos):
                 img = img[y-w//2:y+w//2,x-w:x+w,...]
                 img = cv2.resize(img, (128, 64)) # 128x64の大きさに変換
                 # 保存先の設定
-                cv2.imwrite(os.path.join(self.svp, (path.split('/')[-1]), files[i]), img)
+                cv2.imwrite(os.path.join(self.svp, (path.split('/')[-2]), (path.split('/')[-1]), files[i]), img)
                 # パスの保存
             i=i+1
+        self._check_data(path)
+    
+    def _check_data(self, path):
+        root, frame_path, parent_number, data_number = path.split('/')
+        frames_len = len(os.listdir(path))
+        lips_len = len(os.listdir(os.path.join(self.svp, parent_number, data_number)))
+        if ((frames_len - lips_len) != 0):
+            root, _, parent_number, data_number = path.split('/')
+            lips_path = os.path.join(self.svp, parent_number, data_number)
+            voice_path = os.path.join(root, "fa_voice", parent_number, data_number+'.wav')
+            cut_video_path = os.path.join(root, "fa_cut_videos", parent_number, data_number+'.mp4')
+            print('Short of lips frame.')
+            print('Delete: ')
+            print('frames: ', path)
+            shutil.rmtree(path)
+            print('lips: ', lips_path)
+            shutil.rmtree(lips_path)
+            print('cut_video: ', cut_video_path)
+            #os.remove(cut_video_path)
+            print('voice: ', voice_path)
+            os.remove(voice_path)
+        else:
+            print('Check pass.')
+        print('frames_len: {}'.format(frames_len))
+        print('lips_len: {}'.format(lips_len))
+
+
+
 
 
     def _extract_lips(self):
@@ -125,11 +154,6 @@ class ExtractLips(CutVideos):
             for data in data_paths:
                 print("\nData: ", data, "\n")
                 fn = data.split('/')
-                #fn.remove('')
-                """print(fn[-1])
-                print(os.path.join(self.svp, fn[-2]))
-                print(os.path.join(self.svp, fn[-2], fn[-1]))
-                exit()"""
                 self.exists_folder(os.path.join(self.svp, fn[-2]))
                 self.exists_folder(os.path.join(self.svp, fn[-2], fn[-1]))
                 self._run(data)
