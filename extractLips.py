@@ -4,6 +4,7 @@ import cv2
 import face_alignment
 import os
 import shutil
+import torch
 
 
 """
@@ -75,7 +76,6 @@ class ExtractLips(CutVideos):
             print('Message: ', path, ' is empty.')
             return
         files.sort()
-        
         #files = [files[0], files[1]]
         array = [cv2.imread(os.path.join(path, file)) for file in files]
         # データがないものをフィルタ処理をしたデータの配列を返す
@@ -109,6 +109,14 @@ class ExtractLips(CutVideos):
                 cv2.imwrite(os.path.join(self.svp, (path.split('/')[-2]), (path.split('/')[-1]), files[i]), img)
                 # パスの保存
             i=i+1
+        print('start: ')
+        print(os.system('nvidia-smi'))
+        print()
+        del fa
+        torch.cuda.empty_cache()
+        print('cache delete: ')
+        print(os.system('nvidia-smi'))
+        print()
         self._check_data(path)
     
     def _check_data(self, path):
@@ -127,17 +135,13 @@ class ExtractLips(CutVideos):
             print('lips: ', lips_path)
             shutil.rmtree(lips_path)
             print('cut_video: ', cut_video_path)
-            #os.remove(cut_video_path)
+            os.remove(cut_video_path)
             print('voice: ', voice_path)
             os.remove(voice_path)
         else:
             print('Check pass.')
         print('frames_len: {}'.format(frames_len))
         print('lips_len: {}'.format(lips_len))
-
-
-
-
 
     def _extract_lips(self):
         print("-"*10, " START EXTRACT LIPS ", "-"*10)
@@ -156,6 +160,10 @@ class ExtractLips(CutVideos):
                 fn = data.split('/')
                 self.exists_folder(os.path.join(self.svp, fn[-2]))
                 self.exists_folder(os.path.join(self.svp, fn[-2], fn[-1]))
+                if 89 == len(os.listdir(os.path.join(self.svp, fn[-2], fn[-1]))) or 88 == len(os.listdir(os.path.join(self.svp, fn[-2], fn[-1]))):
+                    print('Exists 89 frames.')
+                    print()
+                    continue
                 self._run(data)
         print("-"*10, " FINISH EXTRACT LIPS ", "-"*10)
         _, _, free = shutil.disk_usage('/')

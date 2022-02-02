@@ -95,10 +95,10 @@ def setup_data(data_folder, total_data_num):
     datas.sort()
     result_total = total_data_num
     for cn in range(len(datas)):
-        #print(datas[cn])
+        print(datas[cn])
         _, ext = os.path.splitext(datas[cn])
         filename = 'no_{}{}'.format(result_total, ext)
-        #print(filename)
+        print(filename)
         shutil.copy2(os.path.join(data_folder, datas[cn]), os.path.join(opt.full_auto_path, filename))
         result_total += 1
     return result_total
@@ -112,6 +112,7 @@ def full_auto(paths):
     count = mf_and_ev(paths, opt.fa_data_save[count], count)
     count = e_l(opt.fa_data_save[count-1][0], opt.fa_data_save[count], count)
     count = v_r(opt.fa_data_save[count-2][1], opt.fa_data_save[count], count)
+    exit()
     return
 
 # Manual mode
@@ -145,13 +146,12 @@ def full_auto(paths):
     return"""
 
 if __name__ == "__main__":
-    total_data_num = 0
+    total_data_num = 48
     data_folders = get_media_path()
     print(data_folders)
-    #exit()
-    for i in range(len(data_folders)):#opt.copy_folder_num):
+    for i in range(1, len(data_folders)):#opt.copy_folder_num):
         print("-"*10, ' DATA LOAD ', "-"*10, '\n')
-        #total_data_num = setup_data(data_folders[i], total_data_num)
+        total_data_num = setup_data(data_folders[i], total_data_num)
         print(total_data_num)
         print("-"*10, ' COMPLETE ', "-"*10, '\n')
 
@@ -162,7 +162,6 @@ if __name__ == "__main__":
             print("No file.")
             exit()
         print("-"*10, ' COMPLETE ', "-"*10, '\n')
-
         full_auto(path)
     """judge = True
     while judge:
