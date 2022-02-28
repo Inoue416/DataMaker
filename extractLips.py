@@ -160,8 +160,8 @@ class ExtractLips(CutVideos):
                 fn = data.split('/')
                 self.exists_folder(os.path.join(self.svp, fn[-2]))
                 self.exists_folder(os.path.join(self.svp, fn[-2], fn[-1]))
-                if 89 == len(os.listdir(os.path.join(self.svp, fn[-2], fn[-1]))) or 88 == len(os.listdir(os.path.join(self.svp, fn[-2], fn[-1]))):
-                    print('Exists 89 frames.')
+                if 88 <= len(os.listdir(os.path.join(self.svp, fn[-2], fn[-1]))):
+                    print('Exists more 88.')
                     print()
                     continue
                 self._run(data)

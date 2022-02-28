@@ -53,15 +53,17 @@ def mf_and_ev(paths, dsv, key):
     return key+1"""
 
 # extract lips from frames.
-def e_l(datas, dsv, key):
-    frames_data = [os.path.join(datas, fname) for fname in os.listdir(datas)]
+def e_l(datas, dsv, key, kind_no):
+    frames_data = [os.path.join(datas, fname) for fname in kind_no]
+    frames_data.sort()
     el = ExtractLips(vps=frames_data, svp=dsv)
     el._extract_lips()
     return key+1
 
 
-def v_r(datas, dsv, key):
-    data_paths = [os.path.join(datas, fname) for fname in os.listdir(datas)]
+def v_r(datas, dsv, key, kind_no):
+    data_paths = [os.path.join(datas, fname) for fname in kind_no]
+    data_paths.sort()
     vr = VoiceRecognizer(vps=data_paths, svp=dsv, pre_weight=opt.vr_preweight)
     vr._voice_recognition()
     return
@@ -94,25 +96,26 @@ def setup_data(data_folder, total_data_num):
     datas = os.listdir(data_folder)
     datas.sort()
     result_total = total_data_num
+    kind_no = []
     for cn in range(len(datas)):
         print(datas[cn])
         _, ext = os.path.splitext(datas[cn])
         filename = 'no_{}{}'.format(result_total, ext)
+        kind_no.append('no_{}'.format(result_total))
         print(filename)
-        shutil.copy2(os.path.join(data_folder, datas[cn]), os.path.join(opt.full_auto_path, filename))
+        #shutil.copy2(os.path.join(data_folder, datas[cn]), os.path.join(opt.full_auto_path, filename))
         result_total += 1
-    return result_total
+    return result_total, kind_no
 
 
 # Full auto mode
-def full_auto(paths):
-    count = 0
-    count = c_v(paths, opt.fa_data_save[count], count)
-    paths = os.listdir(opt.fa_data_save[count-1])
-    count = mf_and_ev(paths, opt.fa_data_save[count], count)
-    count = e_l(opt.fa_data_save[count-1][0], opt.fa_data_save[count], count)
-    count = v_r(opt.fa_data_save[count-2][1], opt.fa_data_save[count], count)
-    exit()
+def full_auto(paths, kind_no):
+    count = 2 #0
+    #count = c_v(paths, opt.fa_data_save[count], count)
+    #paths = os.listdir(opt.fa_data_save[count-1])
+    #count = mf_and_ev(paths, opt.fa_data_save[count], count)
+    count = e_l(opt.fa_data_save[count-1][0], opt.fa_data_save[count], count, kind_no)
+    count = v_r(opt.fa_data_save[count-2][1], opt.fa_data_save[count], count, kind_no)
     return
 
 # Manual mode
@@ -146,23 +149,26 @@ def full_auto(paths):
     return"""
 
 if __name__ == "__main__":
-    total_data_num = 48
+    total_data_num = 91
     data_folders = get_media_path()
     print(data_folders)
-    for i in range(1, len(data_folders)):#opt.copy_folder_num):
+
+    for i in range(2, len(data_folders)):#opt.copy_folder_num):
         print("-"*10, ' DATA LOAD ', "-"*10, '\n')
-        total_data_num = setup_data(data_folders[i], total_data_num)
+        total_data_num, kind_no = setup_data(data_folders[i], total_data_num)
         print(total_data_num)
+        print(kind_no)
+        #exit()
         print("-"*10, ' COMPLETE ', "-"*10, '\n')
 
         print("-"*10, ' DATA LOAD ', "-"*10, '\n')
         path= opt.full_auto_path
         path = [os.path.join(path, f) for f in os.listdir(path)]
-        if not path:
-            print("No file.")
-            exit()
+        #if not path:
+            #print("No file.")
+            #exit()
         print("-"*10, ' COMPLETE ', "-"*10, '\n')
-        full_auto(path)
+        full_auto(path, kind_no)
     """judge = True
     while judge:
         print("Choose phase.")
